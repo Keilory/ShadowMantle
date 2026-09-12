@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+
+# Fabric Loom / generated Minecraft development files
+run/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Java
+*.class
+
+# Logs and crash dumps
+*.log
+hs_err_pid*
+replay_pid*
+
+# Archives / build artifacts
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.vscode/settings.json

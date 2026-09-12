@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "shadowmantle",
+  "version": "${version}",
+  "name": "ShadowMantle",
+  "description": "Client-side Fabric QoL utilities for Hypixel-style SkyBlock servers.",
+  "authors": [
+    "Keilory"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.keilory.shadowmantle.ShadowMantleClient"
+    ]
+  },
+  "mixins": [
+    "shadowmantle.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=21",
+    "fabric-api": ">=${fabric_version}"
+  }
+}

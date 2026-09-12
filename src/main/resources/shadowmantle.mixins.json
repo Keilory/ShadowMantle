@@ -1,0 +1,22 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.keilory.shadowmantle.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "ScreenAccessor",
+    "ScreenHandlerRenderStateMixin",
+    "YggdrasilServicesKeyInfoMixin",
+    "EntityGlowMixin",
+    "MinecraftClientOutlineMixin",
+    "EntityMixin",
+    "PlayerListHudAccessor",
+    "WorldRendererMixin",
+	"HandledScreenAccessor",
+	"HandledScreenRenderMixin",
+	"ScreenHandlerRenderStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,102 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    include implementation("org.xerial:sqlite-jdbc:${project.sqlite_version}")
+}
+
+// Build configurator writes this file temporarily for custom builds.
+// Dev runs are unaffected because no module profile means full sources.
+def disabledModulesFile = file('.shadowmantle_disabled_modules')
+if (disabledModulesFile.exists()) {
+    def disabledModules = disabledModulesFile.readLines().findAll { it.trim() }
+    sourceSets {
+        main {
+            java {
+                disabledModules.each { module ->
+                    exclude "**/${module}/**"
+                }
+            }
+        }
+    }
+}
+
+loom {
+    runs {
+        client {
+            client()
+            configName = 'ShadowMantle Client'
+            runDir = 'run'
+            programArgs '--username', 'Testsubject'
+            vmArg '-Dfile.encoding=UTF-8'
+        }
+    }
+}
+
+// Separate production-style Minecraft instance for testing arbitrary Fabric mods.
+// Only JARs placed in test-client/mods are loaded; the development ShadowMantle
+// source set is not injected into this client.
+tasks.register("prodTestClient", net.fabricmc.loom.task.prod.ClientProductionRunTask) {
+    runDir = file("test-client")
+    mods.from(fileTree("test-client/mods") {
+        include "*.jar"
+    })
+    jvmArgs.add("-Dfile.encoding=UTF-8")
+}
+
+processResources {
+    inputs.property 'version', project.version
+    inputs.property 'minecraft_version', project.minecraft_version
+    inputs.property 'loader_version', project.loader_version
+    inputs.property 'fabric_version', project.fabric_version
+    filesMatching('fabric.mod.json') {
+        expand(
+            version: project.version,
+            minecraft_version: project.minecraft_version,
+            loader_version: project.loader_version,
+            fabric_version: project.fabric_version
+        )
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+}
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+jar {
+    from('LICENSE') {
+        rename { "${it}_${project.archives_base_name}" }
+    }
+
+    from('THIRD-PARTY-NOTICES') {
+        into('/')
+    }
+}
+
+publishing {
+    publications {
+        create('mavenJava', MavenPublication) {
+            from components.java
+        }
+    }
+}
